@@ -17,7 +17,7 @@ class RegisterForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password',
                                     validators=[
                                     DataRequired(),
-                                    EqualTo(password)])
+                                    EqualTo('password')])
     submit = SubmitField('Sign Up')
 
 class LoginForm(FlaskForm):
