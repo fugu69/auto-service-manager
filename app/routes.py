@@ -1,12 +1,6 @@
-import os
-from dotenv import load_dotenv
-from flask import Flask, render_template, request, redirect, flash, url_for
-from forms import RegisterForm, LoginForm
-
-load_dotenv()
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+from flask import render_template, flash, redirect, url_for
+from app import app
+from app.forms import RegisterForm, LoginForm
 
 @app.route("/")
 @app.route("/home")
@@ -25,14 +19,3 @@ def register():
 def login():
     form = LoginForm()
     return render_template("login.html", title="Log In", form=form)
-
-
-
-
-
-
-
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
