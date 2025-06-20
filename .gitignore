@@ -2,3 +2,6 @@ venv/
 
 plan.txt
 
+.env
+
+__pycache__/
