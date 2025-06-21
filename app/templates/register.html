@@ -10,7 +10,7 @@
         <div class="card-body p-4">
           <h2 class="card-title text-center mb-4">Create an Account</h2>
 
-          <form method="POST" action="">
+          <form method="POST" action="{{ url_for('register') }}">
 						<!-- CSRF token -->
             {{ form.hidden_tag() }}
 
