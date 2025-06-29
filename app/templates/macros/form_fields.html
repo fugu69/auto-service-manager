@@ -1,0 +1,23 @@
+{% macro render_field(field, size='lg') %}
+  <div class="mb-3">
+    {{ field.label(class="form-label") }}
+
+    {% set classes = 'form-control' %}
+    {% if field.type != 'FileField' %}
+      {% set classes = classes + ' form-control-' + size %}
+    {% endif %}
+    {% if field.errors %}
+      {% set classes = classes + ' is-invalid' %}
+    {% endif %}
+
+    {{ field(class=classes) }}
+
+    {% if field.errors %}
+      <div class="invalid-feedback">
+        {% for error in field.errors %}
+          <span>{{ error }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+{% endmacro %}
