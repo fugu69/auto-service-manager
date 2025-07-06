@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "macros/form_fields.html" import render_field %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+          <h2 class="card-title text-center mb-4">Add a vehicle</h2>
+
+          <form method="POST" action="{{ url_for('new_vehicle') }}">
+						<!-- CSRF token -->
+            {{ form.hidden_tag() }}
+
+            {{ render_field(form.make) }}
+            {{ render_field(form.model) }}
+            {{ render_field(form.year) }}
+            {{ render_field(form.mileage) }}
+
+            <div class="d-grid">
+              {{ form.submit(class="btn btn-primary btn-lg") }}
+            </div>
+          </form>
+
+          <hr class="my-4" />
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock content %}

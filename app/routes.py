@@ -3,7 +3,7 @@ import secrets
 from PIL import Image
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db, bcrypt
-from app.forms import RegisterForm, LoginForm, UpdateAccountForm
+from app.forms import RegisterForm, LoginForm, UpdateAccountForm, AddVehicleForm
 from app.models import User
 from flask_login import login_user, logout_user, current_user, login_required
 from urllib.parse import urlparse, urljoin
@@ -103,3 +103,13 @@ def account():
         form.email.data = current_user.email
     image_file = url_for('static', filename='profile_pics/' + (current_user.image_file or 'default.jpg'))
     return render_template("account.html", title="Account", image_file=image_file, form=form)
+
+@app.route("/vehicle/new", methods=['GET', 'POST'])
+@login_required
+def new_vehicle():
+    form = AddVehicleForm()
+    if form.validate_on_submit():
+        flash("Car added to the garage!", "success")
+        return redirect(url_for('index'))
+    return render_template("add_vehicle.html", title="New Vehicle", form=form)
+
