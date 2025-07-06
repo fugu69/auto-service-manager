@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+
+  <h1>{{ vehicle.make }} {{ vehicle.model }}</h1>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Details</h5>
+      <p class="card-text">
+        Year: {{ vehicle.year }}<br>
+        Mileage: {{ vehicle.mileage }} km<br>
+        VIN: {{ vehicle.vin or "N/A" }}<br>
+        Engine: {{ vehicle.engine_type or "N/A" }} {{ vehicle.engine_model or "" }}<br>
+        Transmission: {{ vehicle.transmission_type or "N/A" }}
+      </p>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-start mt-3">
+		<a href="{{ url_for('garage') }}" class="btn btn-outline-primary">
+			← Back to Garage
+		</a>
+	</div>
+
+
+{% endblock %}

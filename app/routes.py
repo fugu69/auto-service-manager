@@ -4,7 +4,7 @@ from PIL import Image
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db, bcrypt
 from app.forms import RegisterForm, LoginForm, UpdateAccountForm, AddVehicleForm
-from app.models import User
+from app.models import User, Vehicle
 from flask_login import login_user, logout_user, current_user, login_required
 from urllib.parse import urlparse, urljoin
 
@@ -109,7 +109,20 @@ def account():
 def new_vehicle():
     form = AddVehicleForm()
     if form.validate_on_submit():
+        vehicle = Vehicle(make=form.make.data, model=form.model.data, year=form.year.data, mileage=form.mileage.data, owner=current_user)
+        db.session.add(vehicle)
+        db.session.commit()
         flash("Car added to the garage!", "success")
         return redirect(url_for('index'))
     return render_template("add_vehicle.html", title="New Vehicle", form=form)
 
+@app.route("/vehicle/<int:vehicle_id>")
+def vehicle(vehicle_id):
+    vehicle = Vehicle.query.get_or_404(vehicle_id)
+    return render_template("vehicle.html", title=f"{vehicle.make} {vehicle.model}", vehicle=vehicle)
+
+@app.route("/garage", methods=['GET', 'POST'])
+@login_required
+def garage():
+    vehicles = Vehicle.query.filter_by(user_id=current_user.id).all()
+    return render_template("garage.html", title="Garage", vehicles=vehicles)
