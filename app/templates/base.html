@@ -31,6 +31,9 @@
 					</li>
 					{% if current_user.is_authenticated %}
 						<li>	
+							<a class="nav-link text-muted" href="{{ url_for('garage') }}">Garage</a>
+						</li>
+						<li>	
 							<a class="nav-link text-muted" href="{{ url_for('new_vehicle') }}">Add vehicle</a>
 						</li>
 						<li>	

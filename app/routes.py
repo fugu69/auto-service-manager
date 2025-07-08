@@ -1,9 +1,9 @@
 import os
 import secrets
 from PIL import Image
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, abort
 from app import app, db, bcrypt
-from app.forms import RegisterForm, LoginForm, UpdateAccountForm, AddVehicleForm
+from app.forms import RegisterForm, LoginForm, UpdateAccountForm, AddVehicleForm, UpdateVehicleForm
 from app.models import User, Vehicle
 from flask_login import login_user, logout_user, current_user, login_required
 from urllib.parse import urlparse, urljoin
@@ -40,30 +40,28 @@ def login():
         return redirect(url_for("index"))
 
     form = LoginForm()
-    next_page = request.args.get('next')  # from GET query string (initial request)
+    next_page = request.args.get('next')
 
     # Treat empty string or literal "None" as no redirect
     if not next_page or next_page.lower() == "none":
         next_page = None
-
-    safe_next = next_page if is_safe_url(next_page) else None
-    return redirect(safe_next or url_for("index"))
-
 
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
 
-            # Get next_page from POST (form)
-            next_page = request.form.get('next')
-            safe_next = next_page if next_page and is_safe_url(next_page) else None
+            # GET or POST value
+            post_next = request.form.get('next') or next_page
+            safe_next = post_next if post_next and is_safe_url(post_next) else None
 
             return redirect(safe_next or url_for("index"))
 
         flash('Fail to log in! Check the input', 'danger')
 
     return render_template("login.html", title="Log In", form=form, next_page=next_page)
+
+
 
 
 @app.route("/logout", methods=['POST'])
@@ -113,13 +111,34 @@ def new_vehicle():
         db.session.add(vehicle)
         db.session.commit()
         flash("Car added to the garage!", "success")
-        return redirect(url_for('index'))
-    return render_template("add_vehicle.html", title="New Vehicle", form=form)
+        return redirect(url_for('garage'))
+    return render_template("add_vehicle.html", title="New Vehicle", 
+                           legend="Add New Vehicle", form=form)
 
 @app.route("/vehicle/<int:vehicle_id>")
+@login_required
 def vehicle(vehicle_id):
     vehicle = Vehicle.query.get_or_404(vehicle_id)
     return render_template("vehicle.html", title=f"{vehicle.make} {vehicle.model}", vehicle=vehicle)
+
+@app.route("/vehicle/<int:vehicle_id>/update", methods=['GET', 'POST'])
+@login_required
+def update_vehicle(vehicle_id):
+    vehicle = Vehicle.query.get_or_404(vehicle_id)
+    if vehicle.owner != current_user:
+        abort(403)
+    form = UpdateVehicleForm(obj=vehicle)
+    if form.validate_on_submit():
+        vehicle.make = form.make.data
+        vehicle.model = form.model.data
+        vehicle.year = form.year.data
+        vehicle.mileage = form.mileage.data
+        db.session.commit()
+        flash("Vehicle Info has been updated", "success")
+        return redirect(url_for("vehicle", vehicle_id=vehicle.id))
+
+    return render_template("update_vehicle.html", title="Update Vehicle",
+                           legend="Update Vehicle Info", form=form)
 
 @app.route("/garage", methods=['GET', 'POST'])
 @login_required

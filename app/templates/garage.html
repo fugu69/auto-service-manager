@@ -24,6 +24,12 @@
     {% endfor %}
   {% else %}
     <p class="text-muted">You don’t have any vehicles in your garage yet.</p>
+      
+    <div class="d-flex justify-content-start mt-3">
+		  <a href="{{ url_for('new_vehicle') }}" class="btn btn-outline-primary">
+			  Add New Vehicle
+		  </a>
+	  </div>
   {% endif %}
 
 {% endblock %}

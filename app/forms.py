@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, EmailField, PasswordField, SubmitField, BooleanField, IntegerField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms import StringField, EmailField, PasswordField, SubmitField, BooleanField, IntegerField, DateField, SelectField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
 from app.models import User
 
 class RegisterForm(FlaskForm):
@@ -74,3 +74,23 @@ class AddVehicleForm(FlaskForm):
     year = IntegerField('Year', validators=[DataRequired()])
     mileage = IntegerField('Mileage', validators=[DataRequired()])
     submit = SubmitField('Add vehicle')
+
+class UpdateVehicleForm(FlaskForm):
+    make = StringField('Make', validators=[DataRequired()])
+    model = StringField('Model', validators=[DataRequired()])
+    year = IntegerField('Year', validators=[DataRequired()])
+    mileage = IntegerField('Mileage', validators=[DataRequired()])
+    vin = StringField('VIN', validators=[Optional()])
+    color = StringField('Color', validators=[Optional()])
+    engine_type = SelectField('Engine Type', choices=[('gasoline', 'Gasoline'), ('diesel', 'Diesel'), ('electric', 'Electric')], validators=[Optional()])
+    engine_model = StringField('Engine Model', validators=[Optional()])
+    engine_number = StringField('Engine Number', validators=[Optional()])
+    transmission_type = StringField('Transmission Type', validators=[Optional()])
+    transmission_model = StringField('Transmission Model', validators=[Optional()])
+    tax_start_date = DateField('Tax Start Date', format='%Y-%m-%d', validators=[Optional()])
+    tax_end_date = DateField('Tax End Date', format='%Y-%m-%d', validators=[Optional()])
+    insurance_start_date = DateField('Insurance Start Date', format='%Y-%m-%d', validators=[Optional()])
+    insurance_end_date = DateField('Insurance End Date', format='%Y-%m-%d', validators=[Optional()])
+    registration_scan = FileField('Registration Scan', validators=[Optional()])
+    insurance_scan = FileField('Insurance Scan', validators=[Optional()])
+    submit = SubmitField('Update Vehicle')
